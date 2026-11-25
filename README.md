@@ -9,6 +9,8 @@ CineVault is a personal movie and TV series collection manager with a responsive
 
 ## Run locally (Windows PowerShell)
 
+The GitHub Pages deployment uses browser-local storage, so the full interface and collection operations work without a separately hosted backend.
+
 Open two PowerShell terminals from the project root.
 
 ### 1. Start the API
