@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090a10">
+  <title>CineVault — Shaxsiy kinoteatringiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.20/dist/hls.min.js"></script>
+</head>
+<body data-page="dashboard">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="index.html"><span class="brand-mark">C</span><span>Cine<span class="brand-light">Vault</span></span></a>
+      <div class="side-label">KINOTEKA</div>
+      <nav class="side-nav">
+        <a class="nav-link active" href="index.html"><span class="nav-icon">⌂</span>Bosh sahifa</a>
+        <a class="nav-link" href="collection.html"><span class="nav-icon">▤</span>To‘plamim</a>
+        <a class="nav-link" href="favorites.html"><span class="nav-icon">♡</span>Sevimlilar</a>
+        <a class="nav-link" href="watchlist.html"><span class="nav-icon">◷</span>Ko‘rish rejasi</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-note"><span class="note-glow"></span><strong>Hikoyalaringiz shu yerda.</strong><p>Sevimli filmlaringiz va seriallaringiz uchun shaxsiy makon.</p></div>
+        <button class="nav-link theme-toggle" type="button" aria-label="Yorug‘ mavzuni yoqish"><span class="nav-icon">☼</span><span>Ko‘rinish</span><span class="theme-state">Qorong‘i</span></button>
+        <div class="profile-row"><span class="avatar">CV</span><span><strong>Mening CineVault’im</strong><small>Shaxsiy kinoteka</small></span><span class="profile-dots">···</span></div>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu" aria-label="Open navigation">☰</button>
+        <div class="breadcrumb">Kinoteka <span>/</span> <strong>Bosh sahifa</strong></div>
+        <div class="top-actions">
+          <label class="global-search"><span>⌕</span><input id="global-search" type="search" placeholder="Kinotekadan izlash..." autocomplete="off"><kbd>⌘ K</kbd></label>
+          <button class="language-toggle" id="language-toggle" type="button" aria-label="Tilni almashtirish" data-i18n="Tilni almashtirish" data-i18n-en="Change language">UZ <span>|</span> EN</button>
+          <button class="icon-button" id="header-theme" title="Ko‘rinishni almashtirish" aria-label="Ko‘rinishni almashtirish">☼</button>
+          <button class="button button-primary button-small" data-open-form><span>＋</span> Kino qo‘shish</button>
+        </div>
+      </header>
+      <div class="page-content">
+        <section class="cinema-hero" id="cinema-hero">
+          <div class="hero-backdrop" id="hero-backdrop"></div>
+          <div class="hero-vignette"></div>
+          <div class="hero-copy">
+            <p class="hero-kicker"><span>4K</span> SHAXSIY TANLASH</p>
+            <h1 id="hero-title">Hikoyalar olamiga xush kelibsiz</h1>
+            <div class="hero-meta" id="hero-meta"></div>
+            <p id="hero-description">Sevimli filmlar va seriallaringiz bir joyda.</p>
+            <div class="hero-actions">
+              <button class="hero-play" id="hero-watch" type="button"><span>▶</span> Tomoshani boshlash</button>
+              <button class="hero-info" id="hero-details" type="button"><span>ⓘ</span> Tafsilotlar</button>
+            </div>
+          </div>
+          <div class="hero-counter"><span id="hero-current">01</span><i></i><span id="hero-total">24</span></div>
+        </section>
+        <section class="stats-grid" id="dashboard-stats" aria-label="Kinoteka statistikasi">
+          <div class="stat-card stat-featured"><div class="stat-top"><span class="stat-icon">▤</span><span class="stat-caption">JAMI ASARLAR</span><span class="stat-spark">↗</span></div><strong class="stat-value" data-stat="total">—</strong><span class="stat-foot">kinotekangizda</span><div class="stat-accent"></div></div>
+          <div class="stat-card"><div class="stat-top"><span class="stat-icon purple">▣</span><span class="stat-caption">FILMLAR</span></div><strong class="stat-value" data-stat="movies">—</strong><span class="stat-foot">to‘liq metrajli</span></div>
+          <div class="stat-card"><div class="stat-top"><span class="stat-icon blue">▥</span><span class="stat-caption">SERIALLAR</span></div><strong class="stat-value" data-stat="series">—</strong><span class="stat-foot">epizodli hikoyalar</span></div>
+          <div class="stat-card"><div class="stat-top"><span class="stat-icon amber">◷</span><span class="stat-caption">JARAYONDA</span></div><strong class="stat-value" data-stat="currently_watching">—</strong><span class="stat-foot">hozir tomosha qilinyapti</span></div>
+          <div class="stat-card"><div class="stat-top"><span class="stat-icon purple">✓</span><span class="stat-caption">TUGATILGAN</span></div><strong class="stat-value" data-stat="completed">—</strong><span class="stat-foot" data-stat-detail="completed">film va seriallar</span></div>
+        </section>
+        <section class="dashboard-columns">
+          <div class="dashboard-main">
+            <section class="section-block">
+              <div class="section-heading"><div><p class="eyebrow">HIKOYA DAVOM ETADI</p><h2>Tomoshani davom ettiring</h2></div><a class="text-link" href="collection.html?status=Currently%20Watching">Barchasi <span>→</span></a></div>
+              <div class="continue-card" id="continue-card"></div>
+            </section>
+            <section class="section-block">
+              <div class="section-heading"><div><p class="eyebrow">YANGI QO‘SHILDI</p><h2>So‘nggi qo‘shilganlar</h2></div><a class="text-link" href="collection.html">To‘plamni ko‘rish <span>→</span></a></div>
+              <div class="poster-row" id="recent-titles"></div>
+            </section>
+          </div>
+          <aside class="dashboard-aside">
+            <section class="section-block favorites-widget">
+              <div class="section-heading"><div><p class="eyebrow">ENG SEVIMLILAR</p><h2>Sevimli asarlaringiz</h2></div><a class="round-arrow" href="favorites.html" aria-label="Barcha sevimlilarni ko‘rish">↗</a></div>
+              <div id="favorite-preview" class="favorite-preview"></div>
+            </section>
+            <section class="watchlist-widget">
+              <div class="watchlist-head"><span class="stat-icon blue">◷</span><span class="stat-caption">NAVBATDAGI TOMOSHA</span><a href="watchlist.html">Ro‘yxat ↗</a></div>
+              <h3><span data-stat="watchlist">—</span> <span data-stat-label="watchlist">asar</span><br>ko‘rish rejangizda</h3><p>Keyingi sevimli filmingizni tanlang.</p>
+              <a class="button button-outline button-small" href="watchlist.html">Ro‘yxatni ochish <span>→</span></a>
+              <span class="watchlist-orb"></span>
+            </section>
+            <div class="quote-card"><span class="quote-mark">“</span><p>Oxir-oqibat barchamiz bir hikoyamiz. Uni go‘zal qiling.</p><span>— CINEVAULT</span></div>
+          </aside>
+        </section>
+        <footer class="footer"><span>© 2026 CineVault</span><span>Kino san’atiga mehr bilan <b>✦</b></span></footer>
+      </div>
+    </main>
+  </div>
+  <div id="modal-root"></div><div id="toast-root" class="toast-root" aria-live="polite"></div>
+  <script src="js/api.js"></script><script src="js/app.js"></script><script src="js/dashboard.js"></script>
+</body>
+</html>
