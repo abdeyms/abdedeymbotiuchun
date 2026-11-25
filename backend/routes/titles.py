@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
+from auth import require_admin
 from database import get_db
 from models import Title
 from schemas import ImportCollection, TitleCreate, TitleRead, TitleUpdate
@@ -55,7 +56,12 @@ def export_titles(db: Session = Depends(get_db)):
     return db.scalars(select(Title).order_by(Title.id)).all()
 
 
-@router.post("/import", response_model=list[TitleRead], status_code=201)
+@router.post(
+    "/import",
+    response_model=list[TitleRead],
+    status_code=201,
+    dependencies=[Depends(require_admin)],
+)
 def import_titles(payload: ImportCollection, db: Session = Depends(get_db)):
     titles = [Title(**item.model_dump()) for item in payload.titles]
     db.add_all(titles)
@@ -73,7 +79,12 @@ def get_title(title_id: int, db: Session = Depends(get_db)):
     return title
 
 
-@router.post("", response_model=TitleRead, status_code=201)
+@router.post(
+    "",
+    response_model=TitleRead,
+    status_code=201,
+    dependencies=[Depends(require_admin)],
+)
 def create_title(payload: TitleCreate, db: Session = Depends(get_db)):
     title = Title(**payload.model_dump())
     db.add(title)
@@ -82,7 +93,11 @@ def create_title(payload: TitleCreate, db: Session = Depends(get_db)):
     return title
 
 
-@router.put("/{title_id}", response_model=TitleRead)
+@router.put(
+    "/{title_id}",
+    response_model=TitleRead,
+    dependencies=[Depends(require_admin)],
+)
 def update_title(title_id: int, payload: TitleUpdate, db: Session = Depends(get_db)):
     title = db.get(Title, title_id)
     if title is None:
@@ -94,7 +109,11 @@ def update_title(title_id: int, payload: TitleUpdate, db: Session = Depends(get_
     return title
 
 
-@router.delete("/{title_id}", status_code=204)
+@router.delete(
+    "/{title_id}",
+    status_code=204,
+    dependencies=[Depends(require_admin)],
+)
 def delete_title(title_id: int, db: Session = Depends(get_db)):
     title = db.get(Title, title_id)
     if title is None:

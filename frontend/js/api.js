@@ -245,7 +245,7 @@
     return query.toString() ? `?${query}` : "";
   };
 
-  window.CineVaultAPI = {
+  const localAPI = {
     list: (params) => list(params),
     get,
     create,
@@ -259,4 +259,72 @@
     export: () => [...load()].sort((a, b) => a.id - b.id),
     import: (titles) => importTitles(titles),
   };
+
+  const apiBase = String(window.CINEVAULT_API || "").trim().replace(/\/+$/, "");
+  let adminToken = "";
+
+  async function remoteRequest(path, options = {}) {
+    const method = options.method || "GET";
+    const adminOnly = Boolean(options.adminOnly);
+
+    if (adminOnly && !adminToken) {
+      adminToken = String(window.prompt("Admin token:") || "").trim();
+      if (!adminToken) throw new Error("Admin token kiritilmadi.");
+    }
+
+    const send = (token) => {
+      const headers = {};
+      if (options.body !== undefined) headers["Content-Type"] = "application/json";
+      if (adminOnly) headers.Authorization = `Bearer ${token}`;
+      return fetch(`${apiBase}${path}`, {
+        method,
+        headers,
+        body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      });
+    };
+
+    let response;
+    try {
+      response = await send(adminToken);
+      if (adminOnly && response.status === 401) {
+        adminToken = String(window.prompt("Admin token noto‘g‘ri. Qayta kiriting:") || "").trim();
+        if (!adminToken) throw new Error("Admin token kiritilmadi.");
+        response = await send(adminToken);
+        if (response.status === 401) adminToken = "";
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message.startsWith("Admin token")) throw error;
+      throw new Error("Serverga ulanib bo‘lmadi. Internet va API manzilini tekshiring.");
+    }
+
+    if (!response.ok) {
+      let payload = {};
+      try {
+        payload = await response.json();
+      } catch (_) {}
+      const detail = payload.detail;
+      const message = Array.isArray(detail)
+        ? detail.map((item) => item.msg).join("; ")
+        : (detail || `Server xatosi (${response.status})`);
+      throw new Error(message);
+    }
+    return response.status === 204 ? null : response.json();
+  }
+
+  const remoteAPI = {
+    list: (params = {}) => remoteRequest(`/titles${queryString(params)}`),
+    get: (id) => remoteRequest(`/titles/${encodeURIComponent(id)}`),
+    create: (title) => remoteRequest("/titles", { method: "POST", body: title, adminOnly: true }),
+    update: (id, title) => remoteRequest(`/titles/${encodeURIComponent(id)}`, { method: "PUT", body: title, adminOnly: true }),
+    remove: (id) => remoteRequest(`/titles/${encodeURIComponent(id)}`, { method: "DELETE", adminOnly: true }),
+    favorites: () => remoteRequest("/favorites"),
+    favorite: (id) => remoteRequest(`/favorites/${encodeURIComponent(id)}`, { method: "POST", adminOnly: true }),
+    unfavorite: (id) => remoteRequest(`/favorites/${encodeURIComponent(id)}`, { method: "DELETE", adminOnly: true }),
+    watchlist: () => remoteRequest("/watchlist"),
+    statistics: () => remoteRequest("/statistics"),
+    export: () => remoteRequest("/titles/export"),
+    import: (titles) => remoteRequest("/titles/import", { method: "POST", body: { titles }, adminOnly: true }),
+  };
+
+  window.CineVaultAPI = apiBase ? remoteAPI : localAPI;
 })();

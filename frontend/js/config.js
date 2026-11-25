@@ -1,0 +1,1 @@
+window.CINEVAULT_API = "";

@@ -1,10 +1,10 @@
 from contextlib import asynccontextmanager
 from datetime import date
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import select
-from sqlalchemy import inspect, text
+from sqlalchemy import inspect, select, text
 
 from database import Base, SessionLocal, engine
 from models import Title
@@ -13,6 +13,8 @@ from routes import favorites, statistics, titles
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    if os.getenv("RENDER") == "true" and engine.dialect.name != "postgresql":
+        raise RuntimeError("Set DATABASE_URL to a persistent PostgreSQL database on Render.")
     Base.metadata.create_all(bind=engine)
     columns = {column["name"] for column in inspect(engine).get_columns("titles")}
     if "trailer_url" not in columns:
@@ -93,9 +95,14 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title="CineVault API", version="1.0.0", lifespan=lifespan)
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "*").split(",")
+    if origin.strip()
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -106,4 +113,6 @@ app.include_router(statistics.router)
 
 @app.get("/api/health")
 def health():
+    with engine.connect() as connection:
+        connection.execute(text("SELECT 1"))
     return {"status": "ok"}
